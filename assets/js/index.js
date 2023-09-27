@@ -22,9 +22,6 @@ function addPlayCard(ticketName) {
   };
 
   const playCard = `<div class="play-card" data-ticket="${ticketName}">
-      <button type="button" class="close-play-card">
-        <i class="fa fa-times"></i>
-      </button>
       <div class="play-card-inner text-center">
         <div class="play-card-header">
           <span class="number-amount">Pick 5 Numbers</span>
@@ -100,16 +97,6 @@ function removeTicket(ticketName) {
 
 // Add event listener for clicks on the cardBody
 cardBody.addEventListener("click", function (event) {
-  if (event.target.classList.contains("fa-times")) {
-    // Find the closest .play-card element
-    const ticketCard = event.target.closest(".play-card");
-
-    if (ticketCard) {
-      const ticketName = ticketCard.getAttribute("data-ticket");
-      removeTicket(ticketName);
-    }
-  }
-
   if (event.target.classList.contains("clear-tickcet")) {
     const ticketName = event.target.getAttribute("data-ticket");
     clearSelections(ticketName);
@@ -275,7 +262,7 @@ function quickPick(ticketName) {
 }
 
 const addedTicketNames = [];
-// Add a play card when the "Add Item" button is clicked
+// add five ticket
 addItemBtn.addEventListener("click", function () {
   const ticketCount = Object.keys(tickets).length;
   const newTicketCount = ticketCount + 1;
@@ -288,23 +275,24 @@ addItemBtn.addEventListener("click", function () {
   }
 });
 
-//delete row
-function deleteRowFunc() {
+// delete row;
+const deleteRow = document.getElementById("delete-item");
+deleteRow.addEventListener("click", function () {
   const lastFiveTicketNames = addedTicketNames.slice(-5);
 
-  // Remove the last five tickets from the DOM and the `tickets` object
   lastFiveTicketNames.forEach((ticketName) => {
     removeTicket(ticketName);
   });
 
-  // Remove the deleted ticket names from the `addedTicketNames` array
   addedTicketNames.splice(-5);
-}
+});
 
-const deleteRow = document.getElementById("delete-item");
-// Add event listener for clicks on the "Delete Item" button
-deleteRow.addEventListener("click", function () {
-  deleteRowFunc();
+// quick pick all
+const quickPickAll = document.getElementById("quick-pick-all");
+quickPickAll.addEventListener("click", function () {
+  for (const ticketName in tickets) {
+    quickPick(ticketName);
+  }
 });
 
 //show tickets
