@@ -100,8 +100,56 @@ cardBody.addEventListener("click", function (event) {
   if (event.target.classList.contains("clear-tickcet")) {
     const ticketName = event.target.getAttribute("data-ticket");
     clearSelections(ticketName);
+  } else if (event.target.matches("#select_multiple li")) {
+    handleMultipleSelection(event.target);
+  } else if (event.target.matches("#select_single li")) {
+    handleSingleSelection(event.target);
   }
 });
+
+// select multiple number
+function handleMultipleSelection(li) {
+  let ticketName = li.getAttribute("data-ticket");
+  let number = li.getAttribute("data-number");
+  let ticketsArr = tickets[ticketName];
+
+  if (!ticketsArr.multiple.includes(number)) {
+    if (ticketsArr.multiple.length <= 4) {
+      ticketsArr.multiple.push(number);
+      li.classList.add("active");
+      updateSelectedNumbersDisplay(ticketName);
+    }
+  } else {
+    // If the number is already selected, remove it
+    const indexToRemove = ticketsArr.multiple.indexOf(number);
+    if (indexToRemove !== -1) {
+      ticketsArr.multiple.splice(indexToRemove, 1);
+      li.classList.remove("active");
+      updateSelectedNumbersDisplay(ticketName);
+    }
+  }
+}
+
+// select single number
+function handleSingleSelection(li) {
+  let ticketName = li.getAttribute("data-ticket");
+  let number = li.getAttribute("data-number");
+  let ticketsArr = tickets[ticketName];
+
+  if (!ticketsArr.single.includes(number) && ticketsArr.single.length < 1) {
+    ticketsArr.single.push(number);
+    li.classList.add("active");
+    updateSelectedNumbersDisplay(ticketName);
+  } else {
+    // If the number is already selected, remove it
+    const indexToRemove = ticketsArr.single.indexOf(number);
+    if (indexToRemove !== -1) {
+      ticketsArr.single.splice(indexToRemove, 1);
+      li.classList.remove("active");
+      updateSelectedNumbersDisplay(ticketName);
+    }
+  }
+}
 
 // Function to clear both "single" and "multiple" selections
 function clearSelections(ticketName) {
@@ -127,59 +175,6 @@ function clearSelections(ticketName) {
   // Update the display
   updateSelectedNumbersDisplay(ticketName);
 }
-
-// select multiple numbers
-let multipleNumbers = document.querySelectorAll("#select_multiple li");
-
-multipleNumbers.forEach((li) => {
-  li.addEventListener("click", function () {
-    let ticketName = li.getAttribute("data-ticket");
-    let number = li.getAttribute("data-number");
-    let ticketsArr = tickets[ticketName];
-
-    if (!ticketsArr.multiple.includes(number)) {
-      if (ticketsArr.multiple.length <= 4) {
-        ticketsArr.multiple.push(number);
-        li.classList.add("active");
-        updateSelectedNumbersDisplay(ticketName);
-      }
-    } else {
-      // If the number is already selected, remove it
-      const indexToRemove = ticketsArr.multiple.indexOf(number);
-      if (indexToRemove !== -1) {
-        ticketsArr.multiple.splice(indexToRemove, 1);
-        li.classList.remove("active");
-        updateSelectedNumbersDisplay(ticketName);
-      }
-    }
-  });
-});
-
-// select single number
-// Select all single numbers
-let singleNumbers = document.querySelectorAll("#select_single li");
-
-singleNumbers.forEach((li) => {
-  li.addEventListener("click", function () {
-    let ticketName = li.getAttribute("data-ticket");
-    let number = li.getAttribute("data-number");
-    let ticketsArr = tickets[ticketName];
-
-    if (!ticketsArr.single.includes(number) && ticketsArr.single.length < 1) {
-      ticketsArr.single.push(number);
-      li.classList.add("active");
-      updateSelectedNumbersDisplay(ticketName);
-    } else {
-      // If the number is already selected, remove it
-      const indexToRemove = ticketsArr.single.indexOf(number);
-      if (indexToRemove !== -1) {
-        ticketsArr.single.splice(indexToRemove, 1);
-        li.classList.remove("active");
-        updateSelectedNumbersDisplay(ticketName);
-      }
-    }
-  });
-});
 
 //Quick pick
 function quickPick(ticketName) {
@@ -249,7 +244,6 @@ function quickPick(ticketName) {
     iterationCount++;
 
     blinkingEffect();
-    console.log(`Blink effect ${iterationCount} completed.`);
 
     if (iterationCount === maxIterations) {
       clearInterval(interval); // Stop the interval after 5 iterations
@@ -318,5 +312,8 @@ addToCart.addEventListener("click", function () {
     alert(
       "You have to select five number and one number from the powered number"
     );
+    return;
   }
+
+  console.log(tickets);
 });
