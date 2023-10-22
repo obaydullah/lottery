@@ -114,7 +114,7 @@ function handleMultipleSelection(li) {
   let ticketsArr = tickets[ticketName];
 
   if (!ticketsArr.multiple.includes(number)) {
-    if (ticketsArr.multiple.length <= 4) {
+    if (ticketsArr.multiple.length <= 6) {
       ticketsArr.multiple.push(number);
       li.classList.add("active");
       updateSelectedNumbersDisplay(ticketName);
@@ -136,7 +136,7 @@ function handleSingleSelection(li) {
   let number = li.getAttribute("data-number");
   let ticketsArr = tickets[ticketName];
 
-  if (!ticketsArr.single.includes(number) && ticketsArr.single.length < 1) {
+  if (!ticketsArr.single.includes(number) && ticketsArr.single.length < 2) {
     ticketsArr.single.push(number);
     li.classList.add("active");
     updateSelectedNumbersDisplay(ticketName);
@@ -188,7 +188,7 @@ function quickPick(ticketName) {
   );
 
   function blinkingEffect() {
-    const maxMultipleNumbersToSelect = 5;
+    const maxMultipleNumbersToSelect = 7;
     const selectedMultipleNumbers = new Set(); // Use a Set to ensure unique selections
 
     // Clear previous selections for this ticket
@@ -217,7 +217,7 @@ function quickPick(ticketName) {
     }
 
     // Generate and select a single random number for single
-    const maxSingleNumbersToSelect = 1;
+    const maxSingleNumbersToSelect = 2;
     const selectedSingleNumbers = new Set(); // Use a Set to ensure unique selections
     while (selectedSingleNumbers.size < maxSingleNumbersToSelect) {
       const randomIndex = Math.floor(Math.random() * singleNumbers.length);
@@ -293,6 +293,7 @@ quickPickAll.addEventListener("click", function () {
 let addToCart = document.querySelector(".single-cart-btn");
 addToCart.addEventListener("click", function () {
   let error = false;
+  let hasSelectedTicket = false;
 
   for (let key in tickets) {
     if (tickets[key].multiple.length > 0 && tickets[key].multiple.length < 5) {
@@ -306,6 +307,17 @@ addToCart.addEventListener("click", function () {
     if (tickets[key].single.length == 1 && tickets[key].multiple.length !== 5) {
       error = true;
     }
+    if (tickets[key].single.length > 0 && tickets[key].multiple.length > 0) {
+      hasSelectedTicket = true;
+      break;
+    }
+  }
+
+  if (!hasSelectedTicket) {
+    alert(
+      "You have to select at least one ticket with both single and multiple selections."
+    );
+    return;
   }
 
   if (error) {
@@ -315,5 +327,15 @@ addToCart.addEventListener("click", function () {
     return;
   }
 
-  console.log(tickets);
+  let ticketTemp = {};
+  for (let ticket in tickets) {
+    if (
+      tickets[ticket].single.length > 0 &&
+      tickets[ticket].multiple.length > 0
+    ) {
+      ticketTemp[ticket] = tickets[ticket];
+    }
+  }
+
+  console.log(ticketTemp);
 });
